@@ -304,8 +304,11 @@
         wrap.style.height = (CANVAS_H * scale) + 'px';
       }
 
-      scaleIframe();
+      const iframe = document.getElementById('work-iframe');
+      iframe.addEventListener('load', scaleIframe);
       window.addEventListener('resize', scaleIframe);
+      // 혹시 이미 로드된 경우 대비
+      setTimeout(scaleIframe, 500);
     } else if (work.input === 'webcam') {
       canvas.innerHTML = `
         <div class="notice-box">
