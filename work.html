@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>작품 — Living Sense</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      background: #fff;
+      color: #111;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      padding: 20px 32px;
+      border-bottom: 1px solid #e8e8e8;
+    }
+
+    .back-btn {
+      font-size: 13px;
+      color: #666;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+
+    .back-btn:hover { color: #111; }
+
+    .back-btn::before {
+      content: '←';
+      font-size: 15px;
+    }
+
+    .nav-counter {
+      margin-left: auto;
+      font-size: 13px;
+      color: #aaa;
+    }
+
+    .work-header {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 40px 32px 24px;
+      width: 100%;
+    }
+
+    .work-title {
+      font-size: 28px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .work-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .work-name {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .badge {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 20px;
+      border: 1px solid #e0e0e0;
+      color: #666;
+      font-weight: 400;
+    }
+
+    .work-description {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 32px 24px;
+      width: 100%;
+      font-size: 14px;
+      color: #888;
+      line-height: 1.7;
+    }
+
+    .canvas-area {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 32px;
+      width: 100%;
+    }
+
+    /* Mouse input: iframe embed */
+    .iframe-wrap {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border: 1px solid #e8e8e8;
+      border-radius: 4px;
+      overflow: hidden;
+      background: #f5f5f5;
+    }
+
+    .iframe-wrap iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* Webcam / Arduino: notice + button */
+    .notice-box {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border: 1px solid #e8e8e8;
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      background: #fafafa;
+    }
+
+    .notice-icon {
+      font-size: 40px;
+      line-height: 1;
+    }
+
+    .notice-text {
+      text-align: center;
+    }
+
+    .notice-text p {
+      font-size: 15px;
+      color: #333;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .notice-text span {
+      font-size: 13px;
+      color: #999;
+    }
+
+    .open-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: #111;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .open-btn:hover { background: #333; }
+
+    .open-btn::after { content: '↗'; }
+
+    .sound-notice {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 16px 32px 0;
+      width: 100%;
+      font-size: 13px;
+      color: #aaa;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Navigation */
+    .work-nav {
+      max-width: 960px;
+      margin: 40px auto 60px;
+      padding: 0 32px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid #e8e8e8;
+      padding-top: 32px;
+    }
+
+    .nav-btn {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      max-width: 240px;
+    }
+
+    .nav-btn.prev { align-items: flex-start; }
+    .nav-btn.next { align-items: flex-end; text-align: right; }
+
+    .nav-btn .nav-direction {
+      font-size: 11px;
+      color: #bbb;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .nav-btn .nav-work-title {
+      font-size: 14px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .nav-btn .nav-work-name {
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    .nav-btn:hover .nav-work-title { color: #111; }
+
+    .nav-placeholder {
+      width: 200px;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="back-btn">목록으로</a>
+    <span class="nav-counter" id="nav-counter"></span>
+  </nav>
+
+  <div class="work-header">
+    <h1 class="work-title" id="work-title"></h1>
+    <div class="work-meta" id="work-meta"></div>
+  </div>
+
+  <p class="work-description" id="work-description"></p>
+
+  <div class="canvas-area" id="canvas-area"></div>
+
+  <div class="sound-notice" id="sound-notice" style="display:none">
+    ♪ 사운드가 재생되는 작품입니다. 볼륨을 확인해주세요.
+  </div>
+
+  <div class="work-nav" id="work-nav"></div>
+
+  <script src="data.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const id = parseInt(params.get('id')) || 0;
+    const work = works[id];
+
+    if (!work) {
+      window.location.href = 'index.html';
+    }
+
+    // Title
+    document.title = `${work.title} — Living Sense`;
+    document.getElementById('work-title').textContent = work.title;
+    document.getElementById('work-description').textContent = work.description;
+    document.getElementById('nav-counter').textContent = `${id + 1} / ${works.length}`;
+
+    // Meta badges
+    const meta = document.getElementById('work-meta');
+    let metaHTML = `<span class="work-name">${work.name}</span>`;
+    if (work.input === 'webcam') metaHTML += `<span class="badge">웹캠</span>`;
+    if (work.input === 'arduino') metaHTML += `<span class="badge">터치 센서</span>`;
+    if (work.sound) metaHTML += `<span class="badge">♪ 사운드</span>`;
+    meta.innerHTML = metaHTML;
+
+    // Canvas area
+    const canvas = document.getElementById('canvas-area');
+
+    if (work.input === 'mouse') {
+      canvas.innerHTML = `
+        <div class="iframe-wrap">
+          <iframe
+            src="${work.link}"
+            allow="fullscreen"
+            allowfullscreen
+            loading="lazy"
+            title="${work.title}"
+          ></iframe>
+        </div>
+      `;
+    } else if (work.input === 'webcam') {
+      canvas.innerHTML = `
+        <div class="notice-box">
+          <div class="notice-icon">📷</div>
+          <div class="notice-text">
+            <p>웹캠을 사용하는 작품입니다</p>
+            <span>새 탭에서 열면 카메라 권한을 허용할 수 있습니다</span>
+          </div>
+          <a href="${work.link}" target="_blank" rel="noopener" class="open-btn">작품 열기</a>
+        </div>
+      `;
+    } else if (work.input === 'arduino') {
+      canvas.innerHTML = `
+        <div class="notice-box">
+          <div class="notice-icon">⚡</div>
+          <div class="notice-text">
+            <p>터치 센서로 체험하는 작품입니다</p>
+            <span>전시 공간의 아두이노 장치를 사용해주세요</span>
+          </div>
+          <a href="${work.link}" target="_blank" rel="noopener" class="open-btn">작품 열기</a>
+        </div>
+      `;
+    }
+
+    // Sound notice
+    if (work.sound) {
+      document.getElementById('sound-notice').style.display = 'flex';
+    }
+
+    // Navigation
+    const nav = document.getElementById('work-nav');
+    const prev = id > 0 ? works[id - 1] : null;
+    const next = id < works.length - 1 ? works[id + 1] : null;
+
+    let navHTML = '';
+
+    if (prev) {
+      navHTML += `
+        <a href="work.html?id=${id - 1}" class="nav-btn prev">
+          <span class="nav-direction">← 이전 작품</span>
+          <span class="nav-work-title">${prev.title}</span>
+          <span class="nav-work-name">${prev.name}</span>
+        </a>
+      `;
+    } else {
+      navHTML += `<div class="nav-placeholder"></div>`;
+    }
+
+    if (next) {
+      navHTML += `
+        <a href="work.html?id=${id + 1}" class="nav-btn next">
+          <span class="nav-direction">다음 작품 →</span>
+          <span class="nav-work-title">${next.title}</span>
+          <span class="nav-work-name">${next.name}</span>
+        </a>
+      `;
+    } else {
+      navHTML += `<div class="nav-placeholder"></div>`;
+    }
+
+    nav.innerHTML = navHTML;
+  </script>
+</body>
+</html>
